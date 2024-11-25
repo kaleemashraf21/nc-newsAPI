@@ -21,3 +21,29 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/topics", () => {
+  test("200: should return an array of topics objects when topics exist", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toHaveLength(data.topicData.length);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            description: expect.any(String),
+            slug: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("400: should respond with an error message if endpoint is invalid", () => {
+    return request(app)
+      .get("/api/topicss")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route Not Found");
+      });
+  });
+});
