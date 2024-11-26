@@ -3,6 +3,7 @@ const {
   fetchTopics,
   fetchArticlesById,
   fetchAllArticles,
+  fetchArticlesComments,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -27,6 +28,21 @@ exports.getArticlesById = (req, res, next) => {
   fetchArticlesById(article_id)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.getArticlesComments = (req, res, next) => {
+  const { article_id } = req.params;
+  const promises = [fetchArticlesComments(article_id)];
+
+  if (article_id) {
+    promises.push(fetchArticlesById(article_id));
+  }
+
+  Promise.all(promises)
+    .then(([comments]) => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };

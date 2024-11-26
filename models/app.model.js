@@ -20,7 +20,7 @@ exports.fetchAllArticles = () => {
     ORDER BY articles.created_at DESC;`;
 
   return db.query(queryText).then(({ rows }) => {
-    if (rows.length === 0) {
+    if (!rows.length) {
       return Promise.reject({
         status: 404,
         msg: "No articles found",
@@ -31,10 +31,10 @@ exports.fetchAllArticles = () => {
 };
 
 exports.fetchArticlesById = (article_id) => {
-  const queryText = "SELECT * FROM articles WHERE article_id = $1";
+  const queryText = `SELECT * FROM articles WHERE article_id = $1`;
 
   return db.query(queryText, [article_id]).then(({ rows }) => {
-    if (rows.length === 0) {
+    if (!rows.length) {
       return Promise.reject({
         status: 404,
         msg: "Article Not Found",
@@ -42,4 +42,9 @@ exports.fetchArticlesById = (article_id) => {
     }
     return rows[0];
   });
+};
+exports.fetchArticlesComments = (article_id) => {
+  const queryText = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`;
+
+  return db.query(queryText, [article_id]).then(({ rows }) => rows);
 };
