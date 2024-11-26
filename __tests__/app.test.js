@@ -22,11 +22,12 @@ describe("GET /api", () => {
   });
 
   describe("GET /api/topics", () => {
-    test("200: should return an array of topics objects when topics exist", () => {
+    test("200: Should return an array of topic objects with 'slug' and 'description' properties", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
         .then(({ body: { topics } }) => {
+          expect(Array.isArray(topics)).toBe(true);
           expect(topics).toHaveLength(data.topicData.length);
           topics.forEach((topic) => {
             expect(topic).toMatchObject({
@@ -37,7 +38,7 @@ describe("GET /api", () => {
         });
     });
 
-    test("404: should respond with an error message if endpoint is invalid or misspelled", () => {
+    test("404: Should return an error message if the endpoint is misspelled or invalid", () => {
       return request(app)
         .get("/api/topicss")
         .expect(404)
@@ -48,8 +49,39 @@ describe("GET /api", () => {
   });
 
   describe("GET /api/articles", () => {
+    test("200: Should return an array of article objects, each containing necessary properties and without a 'body' property", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(Array.isArray(articles)).toBe(true);
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+            expect(article).not.toHaveProperty("body");
+          });
+        });
+    });
+
+    test("404: Should return an error message for an invalid or misspelled endpoint", () => {
+      return request(app)
+        .get("/api/articless")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not Found");
+        });
+    });
+
     describe("GET /api/articles/:article_id", () => {
-      test("200 - returns the correct article object when valid article_id provided", () => {
+      test("200: Should return the article object for a valid article_id", () => {
         return request(app)
           .get("/api/articles/2")
           .expect(200)
@@ -66,7 +98,8 @@ describe("GET /api", () => {
             });
           });
       });
-      test("400 sends an appropriate status and error message when given an invalid id", () => {
+
+      test("400: Should respond with 'Bad request' if an invalid article_id is provided", () => {
         return request(app)
           .get("/api/articles/invalidId")
           .expect(400)
@@ -74,7 +107,8 @@ describe("GET /api", () => {
             expect(msg).toBe("Bad request");
           });
       });
-      test("404: should return a 404 and error message if no topics are found with the specific id", () => {
+
+      test("404: Should return 'Article Not Found' when no article matches the provided article_id", () => {
         return request(app)
           .get("/api/articles/999")
           .expect(404)

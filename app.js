@@ -2,7 +2,8 @@ const express = require("express");
 const {
   getEndpoints,
   getTopics,
-  getArticles,
+  getArticlesById,
+  getAllArticles,
 } = require("./controllers/app.controller");
 const {
   customErrorHandler,
@@ -10,12 +11,16 @@ const {
   allEndpointErrorHandler,
   psqlErrorHandler,
 } = require("./errors");
+
 const app = express();
 
 app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
-app.get("/api/articles/:article_id", getArticles);
+
+app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id", getArticlesById);
 
 app.all("*", allEndpointErrorHandler);
 app.use(psqlErrorHandler);
