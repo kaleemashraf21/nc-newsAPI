@@ -24,17 +24,22 @@
     "husky": "^8.0.2",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
+    "jest-sorted": "^1.0.15",
     "pg-format": "^1.0.4",
     "supertest": "^7.0.0"
   },
   "dependencies": {
+    "-": "^0.0.1",
+    "D": "^1.0.0",
     "dotenv": "^16.0.0",
     "express": "^4.21.1",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "sorted": "^0.1.1"
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "jest-extended/all"
+      "jest-extended/all",
+      "jest-sorted"
     ]
   }
 }

@@ -4,6 +4,7 @@ const {
   getTopics,
   getArticlesById,
   getAllArticles,
+  getArticlesComments,
 } = require("./controllers/app.controller");
 const {
   customErrorHandler,
@@ -21,6 +22,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticlesById);
+
+app.get("/api/articles/:article_id/comments", getArticlesComments);
 
 app.all("*", allEndpointErrorHandler);
 app.use(psqlErrorHandler);
