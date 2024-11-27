@@ -170,6 +170,70 @@ describe("GET /api", () => {
           });
       });
     });
+
+    describe("?sort_by query on valid columns", () => {
+      test("200: should accept a sort_by query eg. 'title' column in descending order (A-Z)", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(data.articleData.length);
+            expect(articles).toBeSortedBy("title", { descending: true });
+          });
+      });
+
+      test("200: should return articles sorted by default (created_at) in descending order", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(data.articleData.length);
+            expect(articles).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+
+      test("400: should respond with an error message if sort_by query is invalid", () => {
+        return request(app)
+          .get("/api/articles?sort_by=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
+
+    describe("?order query", () => {
+      test("200: should accept an order query and return articles in ascending order eg. author (Z-A)", () => {
+        return request(app)
+          .get("/api/articles?sort_by=author&order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(data.articleData.length);
+            expect(articles).toBeSortedBy("author");
+          });
+      });
+
+      test("200: should accept an order query and return articles in ascending order for created_at", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(data.articleData.length);
+            expect(articles).toBeSortedBy("created_at");
+          });
+      });
+
+      test("400: should respond with an error message if order query is invalid", () => {
+        return request(app)
+          .get("/api/articles?order=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
   });
 
   describe("GET /api/users", () => {
@@ -217,7 +281,7 @@ describe("POST /api", () => {
             body: newComment.body,
             article_id: 1,
             author: newComment.username,
-            votes: expect.any(Number),
+            votes: 0,
             created_at: expect.any(String),
           });
         });
@@ -241,6 +305,20 @@ describe("POST /api", () => {
       };
       return request(app)
         .post("/api/articles/invalidId/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Should return 'Bad Request' if 'username' doesnt exist", () => {
+      const newComment = {
+        username: "testuser",
+        body: "This is a test comment!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
         .send(newComment)
         .expect(400)
         .then(({ body: { msg } }) => {
@@ -284,6 +362,16 @@ describe("PATCH /api", () => {
       return request(app)
         .patch("/api/articles/not-a-number")
         .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: invalid inc_votes ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: "one" })
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Bad Request");
