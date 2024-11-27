@@ -236,3 +236,51 @@ describe("POST /api", () => {
     });
   });
 });
+
+describe("PATCH /api", () => {
+  describe("PATCH /api/articles/:article_id", () => {
+    test("200: updates the votes and responds with the updated article", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -1 })
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: 1,
+            votes: expect.any(Number),
+          });
+          expect(article.votes).toBe(99);
+        });
+    });
+
+    test("400: invalid article_id ", () => {
+      return request(app)
+        .patch("/api/articles/not-a-number")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Missing inc_votes in request body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: article_id does not exist", () => {
+      return request(app)
+        .patch("/api/articles/9999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article Not Found");
+        });
+    });
+  });
+});

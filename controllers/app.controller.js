@@ -6,6 +6,7 @@ const {
   fetchArticleComments,
   fetchUsersByUsername,
   insertComment,
+  patchArticleVotes,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -68,6 +69,23 @@ exports.postComment = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.updateArticleVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (!inc_votes) {
+    return next({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  patchArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };
