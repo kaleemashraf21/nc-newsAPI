@@ -7,6 +7,7 @@ const {
   fetchUsersByUsername,
   insertComment,
   patchArticleVotes,
+  deleteCommentById,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -28,6 +29,7 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
+
   fetchArticlesById(article_id)
     .then((article) => {
       res.status(200).send({ article });
@@ -37,6 +39,7 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
+
   fetchArticlesById(article_id)
     .then(() => {
       return fetchArticleComments(article_id);
@@ -83,9 +86,27 @@ exports.updateArticleVotes = (req, res, next) => {
       msg: "Bad Request",
     });
   }
+
   patchArticleVotes(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  if (!comment_id) {
+    return next({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+
+  deleteCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };
