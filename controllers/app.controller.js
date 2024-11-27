@@ -2,12 +2,13 @@ const endPointsJSON = require("../endpoints.json");
 const {
   fetchTopics,
   fetchArticlesById,
-  fetchAllArticles,
+  fetchArticles,
   fetchArticleComments,
   fetchUsersByUsername,
   insertComment,
   patchArticleVotes,
   deleteCommentById,
+  fetchUsers,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -19,8 +20,15 @@ exports.getTopics = (req, res) => {
     res.status(200).send({ topics });
   });
 };
-exports.getAllArticles = (req, res, next) => {
-  fetchAllArticles()
+
+exports.getUsers = (req, res) => {
+  fetchUsers().then((users) => {
+    res.status(200).send({ users });
+  });
+};
+
+exports.getArticles = (req, res, next) => {
+  fetchArticles()
     .then((articles) => {
       res.status(200).send({ articles });
     })
