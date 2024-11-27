@@ -27,9 +27,9 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order } = req.query;
+  const { sort_by, order, topic } = req.query;
 
-  fetchArticles(sort_by, order)
+  fetchArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -63,12 +63,6 @@ exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  if (!username || !body) {
-    return next({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
   fetchArticlesById(article_id)
     .then(() => {
       return insertComment(article_id, username, body);
