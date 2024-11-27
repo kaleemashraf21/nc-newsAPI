@@ -22,7 +22,7 @@ describe("GET /api", () => {
   });
 
   describe("GET /api/topics", () => {
-    test("200: Should return an array of topic objects with 'slug' and 'description' properties", () => {
+    test("200: Should return an array of topic objects with the necessary properties", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -169,6 +169,33 @@ describe("GET /api", () => {
             expect(msg).toBe("Article Not Found");
           });
       });
+    });
+  });
+
+  describe("GET /api/users", () => {
+    test("200: Should return an array of user objects with the necessary properties", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users).toHaveLength(data.userData.length);
+          users.forEach((user) => {
+            expect(user).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+
+    test("404: Should return an error message if the endpoint is misspelled", () => {
+      return request(app)
+        .get("/api/userss")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not Found");
+        });
     });
   });
 });

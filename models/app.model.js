@@ -1,10 +1,14 @@
 const db = require("../db/connection");
 
 exports.fetchTopics = () => {
-  return db.query("SELECT * FROM topics").then(({ rows }) => rows);
+  return db.query(`SELECT * FROM topics`).then(({ rows }) => rows);
 };
 
-exports.fetchAllArticles = () => {
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users`).then(({ rows }) => rows);
+};
+
+exports.fetchArticles = () => {
   const query = `SELECT 
       articles.article_id, 
       articles.title, 
@@ -31,7 +35,7 @@ exports.fetchAllArticles = () => {
 };
 
 exports.fetchArticlesById = (article_id) => {
-  const query = `SELECT * FROM articles WHERE article_id = $1`;
+  const query = `SELECT * FROM articles WHERE article_id = $1 `;
 
   return db.query(query, [article_id]).then(({ rows }) => {
     if (!rows.length) {
@@ -44,7 +48,7 @@ exports.fetchArticlesById = (article_id) => {
   });
 };
 exports.fetchArticleComments = (article_id) => {
-  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`;
+  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC `;
 
   return db.query(query, [article_id]).then(({ rows }) => rows);
 };
