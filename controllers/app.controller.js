@@ -4,7 +4,6 @@ const {
   fetchArticlesById,
   fetchArticles,
   fetchArticleComments,
-  fetchUsersByUsername,
   insertComment,
   patchArticleVotes,
   deleteCommentById,
@@ -28,7 +27,9 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+  const { sort_by, order } = req.query;
+
+  fetchArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -68,14 +69,8 @@ exports.postComment = (req, res, next) => {
       msg: "Bad Request",
     });
   }
-
-  const promises = [
-    fetchArticlesById(article_id),
-    fetchUsersByUsername(username),
-  ];
-
-  Promise.all(promises)
-    .then(([article, user]) => {
+  fetchArticlesById(article_id)
+    .then(() => {
       return insertComment(article_id, username, body);
     })
     .then((comment) => {
@@ -88,13 +83,6 @@ exports.updateArticleVotes = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
 
-  if (!inc_votes) {
-    return next({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
-
   patchArticleVotes(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
@@ -104,13 +92,6 @@ exports.updateArticleVotes = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params;
-
-  if (!comment_id) {
-    return next({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
 
   deleteCommentById(comment_id)
     .then(() => {

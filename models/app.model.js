@@ -8,22 +8,43 @@ exports.fetchUsers = () => {
   return db.query(`SELECT * FROM users`).then(({ rows }) => rows);
 };
 
-exports.fetchArticles = () => {
-  const query = `SELECT 
-      articles.article_id, 
-      articles.title, 
-      articles.author, 
-      articles.topic, 
-      articles.created_at, 
-      articles.votes, 
-      articles.article_img_url, 
-       CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`;
+exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const validSortBy = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+  const validOrderSort = ["asc", "desc"];
 
-  return db.query(query).then(({ rows }) => {
+  let queryValues = [];
+
+  if (!validSortBy.includes(sort_by) || !validOrderSort.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  let query = `SELECT 
+        articles.article_id, 
+        articles.title, 
+        articles.author, 
+        articles.topic, 
+        articles.created_at, 
+        articles.votes, 
+        articles.article_img_url, 
+          CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+      FROM articles
+      LEFT JOIN comments ON comments.article_id = articles.article_id
+      GROUP BY articles.article_id `;
+
+  if (sort_by) {
+    query += `ORDER BY ${sort_by} ${order} `;
+  }
+
+  return db.query(query, queryValues).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
         status: 404,
@@ -59,20 +80,6 @@ exports.insertComment = (article_id, username, body) => {
   return db
     .query(query, [article_id, username, body])
     .then(({ rows }) => rows[0]);
-};
-
-exports.fetchUsersByUsername = (username) => {
-  const query = `SELECT * FROM users WHERE username = $1`;
-
-  return db.query(query, [username]).then(({ rows }) => {
-    if (!rows.length) {
-      return Promise.reject({
-        status: 404,
-        msg: "User Not Found",
-      });
-    }
-    return rows[0];
-  });
 };
 
 exports.patchArticleVotes = (article_id, inc_votes) => {
