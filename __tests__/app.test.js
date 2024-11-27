@@ -106,7 +106,7 @@ describe("GET /api", () => {
           .get("/api/articles/invalidId")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad request");
+            expect(msg).toBe("Bad Request");
           });
       });
 
@@ -157,18 +157,82 @@ describe("GET /api", () => {
           .get("/api/articles/invalidId/comments")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad request");
+            expect(msg).toBe("Bad Request");
           });
       });
 
       test("404: should return 404 if article_id does not exist", () => {
         return request(app)
-          .get("/api/articles/999")
+          .get("/api/articles/999/comments")
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Article Not Found");
           });
       });
+    });
+  });
+});
+
+describe("POST /api", () => {
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("201: Should successfully add a comment for the article and return the posted comment", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "This is a test comment!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: { comment } }) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: newComment.body,
+            article_id: 1,
+            author: newComment.username,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+    });
+
+    test("400: Should return 'Bad Request' if 'username' or 'body' properties are missing", () => {
+      const invalidComment = { body: "This is a test comment!" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(invalidComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Should return 'Bad Request' if 'article_id' is invalid", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "This is a test comment!",
+      };
+      return request(app)
+        .post("/api/articles/invalidId/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: Should return 'Article Not Found' if 'article_id' does not exist", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "This is a test comment!",
+      };
+      return request(app)
+        .post("/api/articles/999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article Not Found");
+        });
     });
   });
 });
