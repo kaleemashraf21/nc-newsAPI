@@ -3,7 +3,9 @@ const {
   fetchTopics,
   fetchArticlesById,
   fetchAllArticles,
-  fetchArticlesComments,
+  fetchArticleComments,
+  fetchUsersByUsername,
+  insertComment,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -32,17 +34,40 @@ exports.getArticlesById = (req, res, next) => {
     .catch(next);
 };
 
-exports.getArticlesComments = (req, res, next) => {
+exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  const promises = [fetchArticlesComments(article_id)];
+  fetchArticlesById(article_id)
+    .then(() => {
+      return fetchArticleComments(article_id);
+    })
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
 
-  if (article_id) {
-    promises.push(fetchArticlesById(article_id));
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  if (!username || !body) {
+    return next({
+      status: 400,
+      msg: "Bad Request",
+    });
   }
 
+  const promises = [
+    fetchArticlesById(article_id),
+    fetchUsersByUsername(username),
+  ];
+
   Promise.all(promises)
-    .then(([comments]) => {
-      res.status(200).send({ comments });
+    .then(([article, user]) => {
+      return insertComment(article_id, username, body);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 };

@@ -5,7 +5,7 @@ exports.fetchTopics = () => {
 };
 
 exports.fetchAllArticles = () => {
-  const queryText = `SELECT 
+  const query = `SELECT 
       articles.article_id, 
       articles.title, 
       articles.author, 
@@ -19,11 +19,11 @@ exports.fetchAllArticles = () => {
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC;`;
 
-  return db.query(queryText).then(({ rows }) => {
+  return db.query(query).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
         status: 404,
-        msg: "No articles found",
+        msg: "No Articles Found",
       });
     }
     return rows;
@@ -31,9 +31,9 @@ exports.fetchAllArticles = () => {
 };
 
 exports.fetchArticlesById = (article_id) => {
-  const queryText = `SELECT * FROM articles WHERE article_id = $1`;
+  const query = `SELECT * FROM articles WHERE article_id = $1`;
 
-  return db.query(queryText, [article_id]).then(({ rows }) => {
+  return db.query(query, [article_id]).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
         status: 404,
@@ -43,8 +43,30 @@ exports.fetchArticlesById = (article_id) => {
     return rows[0];
   });
 };
-exports.fetchArticlesComments = (article_id) => {
-  const queryText = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`;
+exports.fetchArticleComments = (article_id) => {
+  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`;
 
-  return db.query(queryText, [article_id]).then(({ rows }) => rows);
+  return db.query(query, [article_id]).then(({ rows }) => rows);
+};
+
+exports.insertComment = (article_id, username, body) => {
+  const query = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING * `;
+
+  return db
+    .query(query, [article_id, username, body])
+    .then(({ rows }) => rows[0]);
+};
+
+exports.fetchUsersByUsername = (username) => {
+  const query = `SELECT * FROM users WHERE username = $1`;
+
+  return db.query(query, [username]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "User Not Found",
+      });
+    }
+    return rows[0];
+  });
 };
