@@ -234,6 +234,44 @@ describe("GET /api", () => {
           });
       });
     });
+    describe("?topic", () => {
+      test("200: should return articles filtered by valid topics eg. mitch", () => {
+        return request(app)
+          .get(`/api/articles?topic=mitch`)
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(
+              articles.filter((article) => article.topic === "mitch").length
+            );
+            articles.forEach(({ topic }) => {
+              expect(topic).toBe("mitch");
+            });
+          });
+      });
+
+      test("200: should return articles filtered by valid topic eg. cats", () => {
+        return request(app)
+          .get(`/api/articles?topic=cats`)
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(
+              articles.filter((article) => article.topic === "cats").length
+            );
+            articles.forEach(({ topic }) => {
+              expect(topic).toBe("cats");
+            });
+          });
+      });
+
+      test("400: should respond with an error message if topic query is invalid", () => {
+        return request(app)
+          .get(`/api/articles?topic=invalid`)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
   });
 
   describe("GET /api/users", () => {
