@@ -62,7 +62,12 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
 };
 
 exports.fetchArticlesById = (article_id) => {
-  const query = `SELECT * FROM articles WHERE article_id = $1 `;
+  const query = `SELECT articles.*, CAST(COUNT(comments.comment_id)AS INTEGER) AS comment_count
+        FROM articles
+        LEFT JOIN comments
+        ON comments.article_id = articles.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id `;
 
   return db.query(query, [article_id]).then(({ rows }) => {
     if (!rows.length) {
@@ -74,6 +79,7 @@ exports.fetchArticlesById = (article_id) => {
     return rows[0];
   });
 };
+
 exports.fetchArticleComments = (article_id) => {
   const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC `;
 

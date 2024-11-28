@@ -29,12 +29,9 @@
     "supertest": "^7.0.0"
   },
   "dependencies": {
-    "-": "^0.0.1",
-    "D": "^1.0.0",
     "dotenv": "^16.0.0",
     "express": "^4.21.1",
-    "pg": "^8.13.1",
-    "sorted": "^0.1.1"
+    "pg": "^8.13.1"
   },
   "jest": {
     "setupFilesAfterEnv": [
