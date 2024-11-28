@@ -1,4 +1,4 @@
-const endPointsJSON = require(`../endpoints.json`);
+const endPointsJSON = require("../endpoints.json");
 const {
   fetchTopics,
   fetchArticlesById,

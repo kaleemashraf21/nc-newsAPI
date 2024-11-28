@@ -101,7 +101,6 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes a comment by comment_id",
-    "exampleResponse": {},
-    "": ""
+    "exampleResponse": {}
   }
 }

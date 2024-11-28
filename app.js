@@ -40,8 +40,11 @@ app.patch("/api/articles/:article_id", updateArticleVotes);
 app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("*", allEndpointErrorHandler);
+
 app.use(psqlErrorHandler);
+
 app.use(customErrorHandler);
+
 app.use(serverErrorHandler);
 
 module.exports = app;

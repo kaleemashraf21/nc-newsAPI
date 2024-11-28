@@ -1,5 +1,5 @@
 exports.allEndpointErrorHandler = (req, res) => {
-  res.status(404).send({ msg: `Not Found` });
+  res.status(404).send({ msg: "Not Found" });
 };
 exports.psqlErrorHandler = (err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502" || err.code === "23503") {

@@ -39,7 +39,7 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
         articles.created_at, 
         articles.votes, 
         articles.article_img_url, 
-          CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+        CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
       FROM articles
       LEFT JOIN comments ON comments.article_id = articles.article_id `;
 
@@ -62,7 +62,9 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
 };
 
 exports.fetchArticlesById = (article_id) => {
-  const query = `SELECT articles.*, CAST(COUNT(comments.comment_id)AS INTEGER) AS comment_count
+  const query = `SELECT
+        articles.*, 
+        CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
         FROM articles
         LEFT JOIN comments
         ON comments.article_id = articles.article_id
