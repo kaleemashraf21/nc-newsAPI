@@ -2,11 +2,13 @@
 
 ## 1. Project Summary
 
-**Northcoders News API (NC News)** is a backend server designed to provide a programmatic interface for accessing application data, akin to a real-world backend service like Reddit. This API enables developers to interact with data related to articles, topics, comments, and users through structured endpoints. These endpoints provide a way for frontend applications to retrieve and manipulate data efficiently.
+**Northcoders News API (NC News)** building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as Reddit) which should provide this information to the front end architecture. This API enables developers to interact with data related to articles, topics, comments, and users through structured endpoints. These endpoints provide a way for frontend applications to retrieve and manipulate data efficiently.
 
 ## Link to the Hosted Version
 
-You can access the live version of the API [here](https://kaleemashraf21.github.io/nc-newsAPI).
+You can access the live version of the API [here](https://nc-newsapi.onrender.com/).
+
+In order to view the information in a nice format, you may want to install a JSON formatter extension to your browser such as this [JSON formatter](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en) extension for Google Chrome. I personally used this extension when viewing the data.
 
 ## Features Implemented
 
@@ -89,7 +91,7 @@ This will populate the database with initial data. You can verify the database c
 \c nc_news
 ```
 
-If running tests, the app.test.js file within the **tests** folder will automatically seed the test database. Access the test database with:
+If running tests, the **app.test.js** file within the **tests** folder will automatically seed the test database. Access the test database with:
 
 ```bash
 \c nc_news_test
@@ -97,12 +99,13 @@ If running tests, the app.test.js file within the **tests** folder will automati
 
 ### 6. Running Tests
 
-The project includes a test suite to verify the functionality and performance of the endpoints. To view the test code, check the app.test.js file located in the **tests** folder. To run the test suite, execute:
+The project includes a test suite to verify the functionality and performance of the endpoints. To view the test code, check the
+**app.test.js** file located in the **tests** folder. To run the test suite, execute:
 
 ```bash
 npm test
 ```
 
-This command will run all tests defined in the app.test.js file
+This command will run all tests defined in the **app.test.js** file.
 
 This portfolio project was created as part of a Full Stack Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com).
