@@ -2,7 +2,7 @@
 
 ## 1. Project Summary
 
-**Northcoders News API (NC News)** building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as Reddit) which should provide this information to the front end architecture. This API enables developers to interact with data related to articles, topics, comments, and users through structured endpoints. These endpoints provide a way for frontend applications to retrieve and manipulate data efficiently.
+**Northcoders News API (NC News)** is a backend project I created as part of the backend development phase of my training. The API was designed to provide programmatic access to application data, simulating the construction of a real-world backend service similar to platforms like Reddit. Through well-structured endpoints, this API allows users to interact with data related to articles, topics, comments, and users. This enables frontend applications to retrieve, display, and manipulate data efficiently.
 
 ## Link to the Hosted Version
 

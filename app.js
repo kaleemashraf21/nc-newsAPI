@@ -39,7 +39,6 @@ app.patch("/api/articles/:article_id", updateArticleVotes);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
-// Error handling
 app.all("*", allEndpointErrorHandler);
 app.use(psqlErrorHandler);
 app.use(customErrorHandler);
