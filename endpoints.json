@@ -1,44 +1,106 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves up a JSON representation of all the available endpoints of the API"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/articles/article_id": {
-    "description": "serves an object matching a specific article_id",
-    "exampleResponse": {
-      "articles": {
-        " title": "Sony Vaio; or, The Laptop",
-        "topic": "mitch",
-        "author": "icellusedkars",
-        "body": "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
-        "created_at": 1602828180000,
-        "votes": 0,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-      }
-    }
-  },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Serves an array of article objects, sorted by created_at in descending order by default",
+    "queries": ["sort_by", "order", "topic"],
     "exampleResponse": {
       "articles": [
         {
           "article_id": 1,
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6,
-          "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+          "title": "Sony Vaio; or, The Laptop",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "created_at": "2020-11-03T09:12:00.000Z",
+          "votes": 100,
+          "article_img_url": "https://example.com/image.jpg",
+          "comment_count": 11
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves an object matching a specific article_id",
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Sony Vaio; or, The Laptop",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "body": "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world...",
+        "created_at": "2020-11-03T09:12:00.000Z",
+        "votes": 100,
+        "article_img_url": "https://example.com/image.jpg",
+        "comment_count": 11
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of comments for the given article_id, sorted by created_at in descending order",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "body": "This is a comment.",
+          "article_id": 1,
+          "author": "butter_bridge",
+          "votes": 16,
+          "created_at": "2020-11-03T09:12:00.000Z"
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "Serves an array of user objects",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "Jonny",
+          "avatar_url": "https://example.com/avatar.jpg"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a new comment to the given article_id",
+    "exampleRequest": {
+      "username": "butter_bridge",
+      "body": "This is a test comment!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "body": "This is a test comment!",
+        "article_id": 1,
+        "author": "butter_bridge",
+        "votes": 0,
+        "created_at": "2020-11-03T09:12:00.000Z"
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the votes on an article",
+    "exampleRequest": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "votes": 101
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment by comment_id",
+    "exampleResponse": {}
   }
 }
