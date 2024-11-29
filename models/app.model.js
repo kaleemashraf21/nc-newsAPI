@@ -88,6 +88,20 @@ exports.fetchArticleComments = (article_id) => {
   return db.query(query, [article_id]).then(({ rows }) => rows);
 };
 
+exports.fetchUsersByUsername = (username) => {
+  const query = `SELECT * FROM users WHERE username = $1 `;
+
+  return db.query(query, [username]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "User Not Found",
+      });
+    }
+    return rows[0];
+  });
+};
+
 exports.insertComment = (article_id, username, body) => {
   const query = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING * `;
 

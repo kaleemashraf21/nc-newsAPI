@@ -319,6 +319,29 @@ describe("GET /api", () => {
         });
     });
   });
+  describe("GET /api/users/:username", () => {
+    test("200: Should return a user object when given a valid username", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toMatchObject({
+            username: "butter_bridge",
+            avatar_url: expect.any(String),
+            name: "jonny",
+          });
+        });
+    });
+
+    test("404: Should return 'User Not Found' when given a non-existent username", () => {
+      return request(app)
+        .get("/api/users/nonexistentuser")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("User Not Found");
+        });
+    });
+  });
 });
 
 describe("POST /api", () => {

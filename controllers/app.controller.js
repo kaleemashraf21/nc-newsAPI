@@ -8,6 +8,8 @@ const {
   patchArticleVotes,
   deleteCommentById,
   fetchUsers,
+  fetchUserByUsername,
+  fetchUsersByUsername,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -55,6 +57,16 @@ exports.getArticleComments = (req, res, next) => {
     })
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.getUsersByUsername = (req, res, next) => {
+  const { username } = req.params;
+
+  fetchUsersByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
     })
     .catch(next);
 };
