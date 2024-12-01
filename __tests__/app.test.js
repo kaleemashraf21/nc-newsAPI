@@ -424,7 +424,21 @@ describe("POST /api", () => {
 
 describe("PATCH /api", () => {
   describe("PATCH /api/articles/:article_id", () => {
-    test("200: updates the votes and responds with the updated article", () => {
+    test("200: Increases the votes and responds with the updated article", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: 1,
+            votes: 101,
+          });
+          expect(article.votes).toBe(101);
+        });
+    });
+
+    test("200: Decreases the votes and responds with the updated article", () => {
       return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: -1 })
@@ -432,7 +446,7 @@ describe("PATCH /api", () => {
         .then(({ body: { article } }) => {
           expect(article).toMatchObject({
             article_id: 1,
-            votes: expect.any(Number),
+            votes: 99,
           });
           expect(article.votes).toBe(99);
         });
@@ -475,6 +489,75 @@ describe("PATCH /api", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Article Not Found");
+        });
+    });
+  });
+  describe("PATCH /api/comments/:comment_id", () => {
+    test("200: Increases the votes and responds with the updated comment", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toMatchObject({
+            comment_id: 1,
+            votes: 17,
+          });
+          expect(comment.votes).toBe(17);
+        });
+    });
+
+    test("200: Decreases the votes and responds with the updated comment", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -1 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toMatchObject({
+            comment_id: 1,
+            votes: 15,
+          });
+          expect(comment.votes).toBe(15);
+        });
+    });
+
+    test("400: Returns 'Bad Request' when comment_id is invalid", () => {
+      return request(app)
+        .patch("/api/comments/not-a-number")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Returns 'Bad Request' if 'inc_votes' is missing", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Returns 'Bad Request' if 'inc_votes' is not a number", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: "one" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: Returns 'Comment Not Found' when comment_id does not exist", () => {
+      return request(app)
+        .patch("/api/comments/9999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Comment Not Found");
         });
     });
   });

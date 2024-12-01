@@ -8,8 +8,8 @@ const {
   patchArticleVotes,
   deleteCommentById,
   fetchUsers,
-  fetchUserByUsername,
   fetchUsersByUsername,
+  patchCommentVotes,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -92,6 +92,17 @@ exports.updateArticleVotes = (req, res, next) => {
   patchArticleVotes(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.updateCommentVotes = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  patchCommentVotes(comment_id, inc_votes)
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch(next);
 };
