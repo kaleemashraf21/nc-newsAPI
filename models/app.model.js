@@ -82,12 +82,6 @@ exports.fetchArticlesById = (article_id) => {
   });
 };
 
-exports.fetchArticleComments = (article_id) => {
-  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC `;
-
-  return db.query(query, [article_id]).then(({ rows }) => rows);
-};
-
 exports.fetchUsersByUsername = (username) => {
   const query = `SELECT * FROM users WHERE username = $1 `;
 
@@ -102,12 +96,34 @@ exports.fetchUsersByUsername = (username) => {
   });
 };
 
+exports.fetchArticleComments = (article_id) => {
+  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC `;
+
+  return db.query(query, [article_id]).then(({ rows }) => rows);
+};
+
 exports.insertComment = (article_id, username, body) => {
   const query = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING * `;
 
   return db
     .query(query, [article_id, username, body])
     .then(({ rows }) => rows[0]);
+};
+
+exports.patchCommentVotes = (comment_id, inc_votes) => {
+  const query = `
+    UPDATE comments
+    SET votes = votes + $1
+    WHERE comment_id = $2
+    RETURNING *;
+  `;
+
+  return db.query(query, [inc_votes, comment_id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Comment Not Found" });
+    }
+    return rows[0];
+  });
 };
 
 exports.patchArticleVotes = (article_id, inc_votes) => {
