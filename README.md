@@ -14,10 +14,10 @@ In order to view the information in a nice format, you may want to install a JSO
 
 For the time being, the following features are implemented:
 
-- **Retrieve** articles, topics, comments, and user information
-- **Add** a new comment to an article
-- **Update** article details
-- **Delete** comments
+- **CRUD Operations**: Manage articles, comments, and users with full create, read, update, and delete functionality.
+- **Sorting & Filtering**: Filter and sort articles by attributes like date or topic.
+- **Pagination**: Efficiently handle large datasets with pagination for articles and comments.
+- **Error Handling & Validation**: Built-in error handling for secure and reliable responses.
 
 ## 2. File Setup Instructions
 
