@@ -10,6 +10,7 @@ const {
   fetchUsers,
   fetchUsersByUsername,
   patchCommentVotes,
+  insertArticle,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -81,6 +82,25 @@ exports.postComment = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  const defaultArticleImgUrl = "https://example.com/default-image.jpg";
+  const imgUrl = article_img_url || defaultArticleImgUrl;
+
+  fetchUsersByUsername(author)
+    .then((user) => {
+      return insertArticle(author, title, body, topic, imgUrl);
+    })
+    .then((newArticle) => {
+      return fetchArticlesById(newArticle.article_id);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

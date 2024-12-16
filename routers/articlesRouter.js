@@ -7,9 +7,11 @@ const {
   updateArticleVotes,
   getArticleComments,
   postComment,
+  postArticle,
 } = require("../controllers/app.controller");
 
 router.get("/", getArticles);
+router.post("/", postArticle);
 router.get("/:article_id", getArticlesById);
 router.patch("/:article_id", updateArticleVotes);
 router.get("/:article_id/comments", getArticleComments);

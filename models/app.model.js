@@ -110,6 +110,15 @@ exports.insertComment = (article_id, username, body) => {
     .then(({ rows }) => rows[0]);
 };
 
+exports.insertArticle = (author, title, body, topic, article_img_url) => {
+  const query = `INSERT INTO articles (author, title, body, topic, article_img_url)
+    VALUES ($1, $2, $3, $4, $5) RETURNING * `;
+
+  return db
+    .query(query, [author, title, body, topic, article_img_url])
+    .then(({ rows }) => rows[0]);
+};
+
 exports.patchCommentVotes = (comment_id, inc_votes) => {
   const query = `
     UPDATE comments

@@ -420,8 +420,95 @@ describe("POST /api", () => {
         });
     });
   });
-});
+  describe("POST /api/articles", () => {
+    test("201: Should successfully add a new article and return the newly created article", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "Test Article",
+        body: "This is the body of the test article.",
+        topic: "cats",
+        article_img_url: "https://example.com/image.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(201)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: newArticle.author,
+            title: newArticle.title,
+            body: newArticle.body,
+            topic: newArticle.topic,
+            article_img_url: newArticle.article_img_url,
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+          });
+        });
+    });
 
+    test("201: Should return default image URL if article_img_url is not provided", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "Test Article Without Image",
+        body: "This is the body of the test article without image.",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(201)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: newArticle.author,
+            title: newArticle.title,
+            body: newArticle.body,
+            topic: newArticle.topic,
+            article_img_url: "https://example.com/default-image.jpg",
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+          });
+        });
+    });
+
+    test("400: Should return an error if topic is invalid", () => {
+      const invalidArticle = {
+        author: "butter_bridge",
+        title: "Invalid Topic",
+        body: "This article has a ivalid topic.",
+        topic: "invalid",
+        article_img_url: "https://example.com/image.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(invalidArticle)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+  });
+
+  test("404: Should return an error if author doesnt exist or is not provided", () => {
+    const invalidArticle = {
+      author: "none-existent",
+      title: "Missing author",
+      body: "This article has no author.",
+      topic: "cats",
+      article_img_url: "https://example.com/image.jpg",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(invalidArticle)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("User Not Found");
+      });
+  });
+});
 describe("PATCH /api", () => {
   describe("PATCH /api/articles/:article_id", () => {
     test("200: Increases the votes and responds with the updated article", () => {
