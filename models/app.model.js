@@ -20,7 +20,14 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     "article_img_url",
   ];
   const validOrderSort = ["asc", "desc"];
-  const validTopics = ["mitch", "cats", "paper"];
+  const validTopics = [
+    "mitch",
+    "cats",
+    "paper",
+    "coding",
+    "football",
+    "cooking",
+  ];
 
   let queryValues = [];
 
