@@ -6,7 +6,6 @@ const commentsRouter = require("./commentsRouter");
 const usersRouter = require("./usersRouter");
 const topicsRouter = require("./topicsRouter");
 
-// API route for Endpoints docs
 const { getEndpoints } = require("../controllers/app.controller");
 apiRouter.get("/", getEndpoints);
 
