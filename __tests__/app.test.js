@@ -253,6 +253,7 @@ describe("GET /api", () => {
           });
       });
     });
+
     describe("?topic", () => {
       test("200: should return articles filtered by valid topics eg. mitch", () => {
         return request(app)
@@ -319,6 +320,7 @@ describe("GET /api", () => {
         });
     });
   });
+
   describe("GET /api/users/:username", () => {
     test("200: Should return a user object when given a valid username", () => {
       return request(app)
@@ -420,6 +422,7 @@ describe("POST /api", () => {
         });
     });
   });
+
   describe("POST /api/articles", () => {
     test("201: Should successfully add a new article and return the newly created article", () => {
       const newArticle = {
@@ -478,7 +481,7 @@ describe("POST /api", () => {
       const invalidArticle = {
         author: "butter_bridge",
         title: "Invalid Topic",
-        body: "This article has a ivalid topic.",
+        body: "This article has an invalid topic.",
         topic: "invalid",
         article_img_url: "https://example.com/image.jpg",
       };
@@ -490,25 +493,26 @@ describe("POST /api", () => {
           expect(msg).toBe("Bad Request");
         });
     });
-  });
 
-  test("404: Should return an error if author doesnt exist or is not provided", () => {
-    const invalidArticle = {
-      author: "none-existent",
-      title: "Missing author",
-      body: "This article has no author.",
-      topic: "cats",
-      article_img_url: "https://example.com/image.jpg",
-    };
-    return request(app)
-      .post("/api/articles")
-      .send(invalidArticle)
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("User Not Found");
-      });
+    test("404: Should return an error if author doesn't exist or is not provided", () => {
+      const invalidArticle = {
+        author: "none-existent",
+        title: "Missing author",
+        body: "This article has no author.",
+        topic: "cats",
+        article_img_url: "https://example.com/image.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(invalidArticle)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("User Not Found");
+        });
+    });
   });
 });
+
 describe("PATCH /api", () => {
   describe("PATCH /api/articles/:article_id", () => {
     test("200: Increases the votes and responds with the updated article", () => {
@@ -579,6 +583,7 @@ describe("PATCH /api", () => {
         });
     });
   });
+
   describe("PATCH /api/comments/:comment_id", () => {
     test("200: Increases the votes and responds with the updated comment", () => {
       return request(app)

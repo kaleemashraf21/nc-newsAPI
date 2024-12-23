@@ -4,6 +4,16 @@ exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics`).then(({ rows }) => rows);
 };
 
+exports.checkTopicExists = (topic) => {
+  return db
+    .query(`SELECT slug FROM topics WHERE slug = $1;`, [topic])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
+    });
+};
+
 exports.fetchUsers = () => {
   return db.query(`SELECT * FROM users`).then(({ rows }) => rows);
 };
@@ -21,21 +31,10 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     "comment_count",
   ];
   const validOrderSort = ["asc", "desc"];
-  const validTopics = [
-    "mitch",
-    "cats",
-    "paper",
-    "coding",
-    "football",
-    "cooking",
-  ];
 
   let queryValues = [];
 
   if (!validSortBy.includes(sort_by) || !validOrderSort.includes(order)) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
-  if (topic && !validTopics.includes(topic)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 

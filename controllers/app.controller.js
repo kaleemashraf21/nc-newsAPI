@@ -11,6 +11,7 @@ const {
   fetchUsersByUsername,
   patchCommentVotes,
   insertArticle,
+  checkTopicExists,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -32,11 +33,16 @@ exports.getUsers = (req, res) => {
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, topic } = req.query;
 
-  fetchArticles(sort_by, order, topic)
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch(next);
+  if (topic) {
+    checkTopicExists(topic)
+      .then(() => fetchArticles(sort_by, order, topic))
+      .then((articles) => res.status(200).send({ articles }))
+      .catch(next);
+  } else {
+    fetchArticles(sort_by, order)
+      .then((articles) => res.status(200).send({ articles }))
+      .catch(next);
+  }
 };
 
 exports.getArticlesById = (req, res, next) => {
