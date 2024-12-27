@@ -31,16 +31,22 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query;
+  const { sort_by, order, topic, limit, page } = req.query;
 
   if (topic) {
     checkTopicExists(topic)
-      .then(() => fetchArticles(sort_by, order, topic))
-      .then((articles) => res.status(200).send({ articles }))
+      .then(() => fetchArticles(sort_by, order, topic, limit, page))
+      .then((articles) => {
+        const numOfArticles = articles.length;
+        res.status(200).send({ articles, total_count: numOfArticles });
+      })
       .catch(next);
   } else {
-    fetchArticles(sort_by, order)
-      .then((articles) => res.status(200).send({ articles }))
+    fetchArticles(sort_by, order, undefined, limit, page)
+      .then((articles) => {
+        const numOfArticles = articles.length;
+        res.status(200).send({ articles, total_count: numOfArticles });
+      })
       .catch(next);
   }
 };

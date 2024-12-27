@@ -18,7 +18,13 @@ exports.fetchUsers = () => {
   return db.query(`SELECT * FROM users`).then(({ rows }) => rows);
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  topic,
+  limit = 10,
+  page = 1
+) => {
   const validSortBy = [
     "article_id",
     "title",
@@ -56,6 +62,11 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   }
 
   query += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} `;
+
+  const offset = (page - 1) * limit;
+
+  queryValues.push(limit, offset);
+  query += `LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`;
 
   return db.query(query, queryValues).then(({ rows }) => {
     if (!rows.length) {
