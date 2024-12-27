@@ -6,25 +6,53 @@
     "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        { "slug": "coding", "description": "Code is love, code is life" },
+        { "slug": "football", "description": "FOOTIE!" },
+        {
+          "slug": "cooking",
+          "description": "Hey good looking, what you got cooking?"
+        }
+      ]
     }
   },
   "GET /api/articles": {
     "description": "Serves an array of article objects, sorted by created_at in descending order by default",
-    "queries": ["sort_by", "order", "topic"],
+    "queries": ["sort_by", "order", "topic", "limit", "page"],
     "exampleResponse": {
       "articles": [
         {
           "article_id": 1,
-          "title": "Sony Vaio; or, The Laptop",
-          "topic": "mitch",
-          "author": "icellusedkars",
-          "created_at": "2020-11-03T09:12:00.000Z",
-          "votes": 100,
-          "article_img_url": "https://example.com/image.jpg",
-          "comment_count": 11
+          "title": "Running a Node App",
+          "topic": "coding",
+          "author": "jessjelly",
+          "created_at": "2024-01-01T00:00:00.000Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700",
+          "comment_count": 0
+        },
+        {
+          "article_id": 2,
+          "title": "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+          "topic": "coding",
+          "author": "jessjelly",
+          "created_at": "2020-05-15T14:15:20.000Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+          "comment_count": 0
+        },
+        {
+          "article_id": 3,
+          "title": "22 Amazing open source React projects",
+          "topic": "coding",
+          "author": "happyamy2016",
+          "created_at": "2020-03-01T09:00:00.000Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/11035471/pexels-photo-11035471.jpeg?w=700&h=700",
+          "comment_count": 0
         }
-      ]
+      ],
+      "total_count": 100
     }
   },
   "GET /api/articles/:article_id": {
@@ -32,14 +60,14 @@
     "exampleResponse": {
       "article": {
         "article_id": 1,
-        "title": "Sony Vaio; or, The Laptop",
-        "topic": "mitch",
-        "author": "icellusedkars",
-        "body": "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world...",
-        "created_at": "2020-11-03T09:12:00.000Z",
-        "votes": 100,
-        "article_img_url": "https://example.com/image.jpg",
-        "comment_count": 11
+        "title": "Running a Node App",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "created_at": "2024-01-01T00:00:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700",
+        "comment_count": 0
       }
     }
   },
@@ -84,6 +112,29 @@
         "author": "butter_bridge",
         "votes": 0,
         "created_at": "2020-11-03T09:12:00.000Z"
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "Adds a new article.",
+    "exampleRequest": {
+      "author": "John",
+      "title": "A New Article",
+      "body": "This is the content of the new article.",
+      "topic": "coding",
+      "article_img_url": "default if not provided"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 21,
+        "author": "John",
+        "title": "A New Article",
+        "body": "This is the content of the new article.",
+        "topic": "coding",
+        "created_at": "2024-01-01T00:00:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://example.com/default_image.jpg",
+        "comment_count": 0
       }
     }
   },
