@@ -114,10 +114,22 @@ exports.fetchUsersByUsername = (username) => {
   });
 };
 
-exports.fetchArticleComments = (article_id) => {
-  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC `;
+exports.fetchArticleComments = (article_id, limit = 10, page = 1) => {
+  const offset = (page - 1) * limit;
 
-  return db.query(query, [article_id]).then(({ rows }) => rows);
+  const query = `
+    SELECT * FROM comments 
+    WHERE article_id = $1 
+    ORDER BY created_at DESC 
+    LIMIT $2 OFFSET $3
+  `;
+
+  return db.query(query, [article_id, limit, offset]).then(({ rows }) => {
+    if (!rows.length && offset > rows.length) {
+      return Promise.reject({ status: 404, msg: "No Comments Found" });
+    }
+    return rows;
+  });
 };
 
 exports.insertComment = (article_id, username, body) => {

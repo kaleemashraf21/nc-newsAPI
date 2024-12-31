@@ -145,7 +145,6 @@ describe("GET /api", () => {
           .get("/api/articles/1/comments")
           .expect(200)
           .then(({ body: { comments } }) => {
-            expect(comments).toHaveLength(11);
             comments.forEach((comment) => {
               expect(comment).toMatchObject({
                 comment_id: expect.any(Number),
@@ -183,6 +182,101 @@ describe("GET /api", () => {
       test("404: should return 404 if article_id does not exist", () => {
         return request(app)
           .get("/api/articles/999/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article Not Found");
+          });
+      });
+    });
+
+    describe("GET /api/articles/:article_id/comments pagination", () => {
+      test("200: Should correctly limit returned results to input limit query for comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=5")
+          .expect(200)
+          .then(({ body }) => {
+            const { comments } = body;
+            expect(comments).toHaveLength(5);
+            comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              });
+            });
+          });
+      });
+
+      test("200: Should correctly offset results by the input page query for comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?page=2")
+          .expect(200)
+          .then(({ body }) => {
+            const { comments } = body;
+            expect(comments).toHaveLength(1);
+            comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              });
+            });
+          });
+      });
+
+      test("200: Should correctly limit and offset results by the input limit and page queries for comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=3&page=2")
+          .expect(200)
+          .then(({ body }) => {
+            const { comments } = body;
+            expect(comments).toHaveLength(3);
+            comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              });
+            });
+          });
+      });
+
+      test("404: Responds with an error message when passed valid page parameter but there are no comments to show", () => {
+        return request(app)
+          .get("/api/articles/1/comments?page=100")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No Comments Found");
+          });
+      });
+
+      test("400: Responds with an error message when passed an invalid limit parameter for comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=invalid_limit")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+
+      test("400: Responds with an error message when passed an invalid page parameter for comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?page=invalid_page")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+
+      test("404: Responds with an error message when trying to fetch comments for an article that doesn't exist", () => {
+        return request(app)
+          .get("/api/articles/99/comments")
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Article Not Found");

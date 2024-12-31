@@ -31,7 +31,7 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic, limit, page } = req.query;
+  const { sort_by, order, topic, limit = 10, page = 1 } = req.query;
 
   if (topic) {
     checkTopicExists(topic)
@@ -63,10 +63,11 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit = 10, page = 1 } = req.query;
 
   fetchArticlesById(article_id)
     .then(() => {
-      return fetchArticleComments(article_id);
+      return fetchArticleComments(article_id, limit, page);
     })
     .then((comments) => {
       res.status(200).send({ comments });
