@@ -12,6 +12,7 @@ const {
   patchCommentVotes,
   insertArticle,
   checkTopicExists,
+  insertTopic,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -146,6 +147,16 @@ exports.deleteComment = (req, res, next) => {
   deleteCommentById(comment_id)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.postTopic = (req, res, next) => {
+  const { slug, description } = req.body;
+
+  insertTopic(slug, description)
+    .then((newTopic) => {
+      res.status(201).send({ newTopic });
     })
     .catch(next);
 };

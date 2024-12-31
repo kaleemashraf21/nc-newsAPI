@@ -186,3 +186,23 @@ exports.deleteCommentById = (comment_id) => {
     return;
   });
 };
+
+exports.insertTopic = (slug, description) => {
+  const checkQuery = "SELECT * FROM topics WHERE slug = $1";
+  const invalidSlugPattern = /[^a-zA-Z]/;
+  if (!slug || !description || invalidSlugPattern.test(slug)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  return db.query(checkQuery, [slug]).then(({ rows }) => {
+    if (rows.length) {
+      return Promise.reject({
+        status: 409,
+        msg: "Topic already exists",
+      });
+    }
+
+    const query = `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING slug, description`;
+    return db.query(query, [slug, description]).then(({ rows }) => rows[0]);
+  });
+};

@@ -707,6 +707,86 @@ describe("POST /api", () => {
   });
 });
 
+describe("POST /api/topics", () => {
+  test("201: Should successfully add a new topic and return the topic object", () => {
+    const newTopic = {
+      slug: "Technology",
+      description: "This is a new test topic",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { newTopic } }) => {
+        expect(newTopic).toMatchObject({
+          slug: newTopic.slug,
+          description: newTopic.description,
+        });
+      });
+  });
+
+  test("400: Should return 'Bad Request' if 'slug' or 'description' properties are missing", () => {
+    const invalidTopic = { description: "This is a topic without a slug" };
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+
+  test("409: Should return 'Topic already exists' if the topic slug already exists", () => {
+    const existingTopic = {
+      slug: "Technology",
+      description: "This topic already exists in the system",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(existingTopic)
+      .expect(201)
+      .then(() => {
+        return request(app)
+          .post("/api/topics")
+          .send(existingTopic)
+          .expect(409)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Topic already exists");
+          });
+      });
+  });
+
+  test("400: Should return 'Bad Request' if 'slug' contains invalid characters (e.g., numbers, spaces or special characters)", () => {
+    const invalidTopic = {
+      slug: "invalid topic",
+      description: "This slug contains spaces which are not allowed.",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+
+  test("400: Should return 'Bad Request' if 'slug' or 'description' is an empty string", () => {
+    const invalidTopic = {
+      slug: "",
+      description: "",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(invalidTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+
 describe("PATCH /api", () => {
   describe("PATCH /api/articles/:article_id", () => {
     test("200: Increases the votes and responds with the updated article", () => {
