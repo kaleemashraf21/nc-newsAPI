@@ -153,5 +153,9 @@
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes a comment by comment_id",
     "exampleResponse": {}
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes an article and it s comment by article_id",
+    "exampleResponse": {}
   }
 }
