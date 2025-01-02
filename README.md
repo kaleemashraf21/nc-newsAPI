@@ -53,7 +53,7 @@ Once you have created the .env files, set up the development and test databases 
 npm run setup-dbs
 ```
 
-### 3. Installing Dependencies
+## 3. Installing Dependencies
 
 All required dependencies are listed in the package.json file. To install them, simply run:
 
@@ -61,7 +61,7 @@ All required dependencies are listed in the package.json file. To install them, 
 npm install
 ```
 
-### 4. Minimum Required Versions of Node.js and Postgres
+## 4. Minimum Required Versions of Node.js and Postgres
 
 Ensure the following minimum versions are installed on your system:
 
@@ -75,7 +75,7 @@ node -v
 psql -V
 ```
 
-### 5. Seeding the Local Database
+## 5. Seeding the Local Database
 
 To seed the database with development data, run:
 
@@ -95,7 +95,7 @@ If running tests, the **app.test.js** file within the **tests** folder will auto
 \c nc_news_test
 ```
 
-### 6. Running Tests
+## 6. Running Tests
 
 The project includes a test suite to verify the functionality and performance of the endpoints. To view the test code, check the
 **app.test.js** file located in the **tests** folder. To run the test suite, execute:
