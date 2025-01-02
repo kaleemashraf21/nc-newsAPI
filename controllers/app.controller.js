@@ -13,6 +13,7 @@ const {
   insertArticle,
   checkTopicExists,
   insertTopic,
+  deleteArticleById,
 } = require("../models/app.model");
 
 exports.getEndpoints = (req, res) => {
@@ -119,6 +120,16 @@ exports.postArticle = (req, res, next) => {
     .catch(next);
 };
 
+exports.postTopic = (req, res, next) => {
+  const { slug, description } = req.body;
+
+  insertTopic(slug, description)
+    .then((newTopic) => {
+      res.status(201).send({ newTopic });
+    })
+    .catch(next);
+};
+
 exports.updateArticleVotes = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
@@ -151,12 +162,12 @@ exports.deleteComment = (req, res, next) => {
     .catch(next);
 };
 
-exports.postTopic = (req, res, next) => {
-  const { slug, description } = req.body;
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
 
-  insertTopic(slug, description)
-    .then((newTopic) => {
-      res.status(201).send({ newTopic });
+  deleteArticleById(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

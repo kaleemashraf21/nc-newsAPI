@@ -149,6 +149,26 @@ exports.insertArticle = (author, title, body, topic, article_img_url) => {
     .then(({ rows }) => rows[0]);
 };
 
+exports.insertTopic = (slug, description) => {
+  const checkQuery = "SELECT * FROM topics WHERE slug = $1";
+  const invalidSlugPattern = /[^a-zA-Z]/;
+  if (!slug || !description || invalidSlugPattern.test(slug)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  return db.query(checkQuery, [slug]).then(({ rows }) => {
+    if (rows.length) {
+      return Promise.reject({
+        status: 409,
+        msg: "Topic already exists",
+      });
+    }
+
+    const query = `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING slug, description`;
+    return db.query(query, [slug, description]).then(({ rows }) => rows[0]);
+  });
+};
+
 exports.patchCommentVotes = (comment_id, inc_votes) => {
   const query = `
     UPDATE comments
@@ -187,22 +207,18 @@ exports.deleteCommentById = (comment_id) => {
   });
 };
 
-exports.insertTopic = (slug, description) => {
-  const checkQuery = "SELECT * FROM topics WHERE slug = $1";
-  const invalidSlugPattern = /[^a-zA-Z]/;
-  if (!slug || !description || invalidSlugPattern.test(slug)) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
+exports.deleteArticleById = (article_id) => {
+  const deleteCommentsQuery = `DELETE FROM comments WHERE article_id = $1`;
+  const deleteArticleQuery = `DELETE FROM articles WHERE article_id = $1 RETURNING *`;
 
-  return db.query(checkQuery, [slug]).then(({ rows }) => {
-    if (rows.length) {
-      return Promise.reject({
-        status: 409,
-        msg: "Topic already exists",
-      });
-    }
-
-    const query = `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING slug, description`;
-    return db.query(query, [slug, description]).then(({ rows }) => rows[0]);
-  });
+  return db
+    .query(deleteCommentsQuery, [article_id])
+    .then(() => {
+      return db.query(deleteArticleQuery, [article_id]);
+    })
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
+    });
 };
