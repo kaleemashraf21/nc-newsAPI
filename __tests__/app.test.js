@@ -929,7 +929,7 @@ describe("PATCH /api", () => {
   });
 });
 
-describe("DELETE /API", () => {
+describe("DELETE /api", () => {
   describe("DELETE /api/comments/:comment_id", () => {
     test("204: deletes the given comment and responds with no content", () => {
       return request(app).delete("/api/comments/1").expect(204);
@@ -947,6 +947,30 @@ describe("DELETE /API", () => {
     test("400: invalid comment_id ", () => {
       return request(app)
         .delete("/api/comments/not-a-number")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+  });
+
+  describe("DELETE /api/articles/:article_id", () => {
+    test("204: deletes the given article and its comments, responds with no content", () => {
+      return request(app).delete("/api/articles/1").expect(204);
+    });
+
+    test("404: article_id does not exist", () => {
+      return request(app)
+        .delete("/api/articles/9999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article Not Found");
+        });
+    });
+
+    test("400: invalid article_id", () => {
+      return request(app)
+        .delete("/api/articles/not-a-number")
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Bad Request");
