@@ -7,13 +7,15 @@ const {
   getArticleComments,
   postComment,
   postArticle,
+  deleteArticle,
 } = require("../controllers/app.controller");
 
 router.get("/", getArticles);
-router.post("/", postArticle);
 router.get("/:article_id", getArticlesById);
-router.patch("/:article_id", updateArticleVotes);
 router.get("/:article_id/comments", getArticleComments);
+router.post("/", postArticle);
 router.post("/:article_id/comments", postComment);
+router.patch("/:article_id", updateArticleVotes);
+router.delete("/:article_id", deleteArticle);
 
 module.exports = router;
