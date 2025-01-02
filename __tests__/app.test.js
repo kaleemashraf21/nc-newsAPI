@@ -394,7 +394,7 @@ describe("GET /api", () => {
           .expect(200)
           .then(({ body }) => {
             const { articles, total_count } = body;
-            expect(total_count).toBe(7);
+            expect(total_count).toBe(13);
             expect(articles).toHaveLength(7);
             expect(articles).toBeSortedBy("created_at", { descending: true });
             articles.forEach((article) => {
@@ -418,7 +418,7 @@ describe("GET /api", () => {
           .expect(200)
           .then(({ body }) => {
             const { articles, total_count } = body;
-            expect(total_count).toBe(10);
+            expect(total_count).toBe(13);
             expect(articles).toHaveLength(10);
             expect(articles).toBeSortedBy("created_at", { descending: true });
             articles.forEach((article) => {
@@ -442,7 +442,7 @@ describe("GET /api", () => {
           .expect(200)
           .then(({ body }) => {
             const { articles, total_count } = body;
-            expect(total_count).toBe(5);
+            expect(total_count).toBe(13);
             expect(articles).toHaveLength(5);
             articles.forEach((article) => {
               expect(article).toMatchObject({

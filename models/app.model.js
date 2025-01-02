@@ -38,44 +38,51 @@ exports.fetchArticles = (
   ];
   const validOrderSort = ["asc", "desc"];
 
-  let queryValues = [];
-
   if (!validSortBy.includes(sort_by) || !validOrderSort.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
+  let queryValues = [];
+
+  let countQuery = `SELECT COUNT(*) FROM articles`;
+
   let query = `SELECT 
-        articles.article_id, 
-        articles.title, 
-        articles.author, 
-        articles.topic, 
-        articles.created_at, 
-        articles.votes, 
-        articles.article_img_url, 
-        CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
-      FROM articles
-      LEFT JOIN comments ON comments.article_id = articles.article_id `;
+      articles.article_id, 
+      articles.title, 
+      articles.author, 
+      articles.topic, 
+      articles.created_at, 
+      articles.votes, 
+      articles.article_img_url, 
+      CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id`;
 
   if (topic) {
-    query += `WHERE articles.topic = $1 `;
+    countQuery += ` WHERE articles.topic = $1`;
+    query += ` WHERE articles.topic = $1`;
     queryValues.push(topic);
   }
 
-  query += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order} `;
+  return db.query(countQuery, queryValues).then(({ rows }) => {
+    const total_count = parseInt(rows[0].count, 10);
 
-  const offset = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-  queryValues.push(limit, offset);
-  query += `LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`;
+    queryValues.push(limit, offset);
 
-  return db.query(query, queryValues).then(({ rows }) => {
-    if (!rows.length) {
-      return Promise.reject({
-        status: 404,
-        msg: "No Articles Found",
-      });
-    }
-    return rows;
+    query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order} `;
+    query += ` LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`;
+
+    return db.query(query, queryValues).then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "No Articles Found",
+        });
+      }
+      return { articles: rows, total_count };
+    });
   });
 };
 

@@ -155,7 +155,7 @@
     "exampleResponse": {}
   },
   "DELETE /api/articles/:article_id": {
-    "description": "Deletes an article and it s comment by article_id",
+    "description": "Deletes an article and its comment by article_id",
     "exampleResponse": {}
   }
 }

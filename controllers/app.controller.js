@@ -38,16 +38,16 @@ exports.getArticles = (req, res, next) => {
   if (topic) {
     checkTopicExists(topic)
       .then(() => fetchArticles(sort_by, order, topic, limit, page))
-      .then((articles) => {
-        const numOfArticles = articles.length;
-        res.status(200).send({ articles, total_count: numOfArticles });
+      .then((response) => {
+        const { articles, total_count } = response;
+        res.status(200).send({ articles, total_count });
       })
       .catch(next);
   } else {
     fetchArticles(sort_by, order, undefined, limit, page)
-      .then((articles) => {
-        const numOfArticles = articles.length;
-        res.status(200).send({ articles, total_count: numOfArticles });
+      .then((response) => {
+        const { articles, total_count } = response;
+        res.status(200).send({ articles, total_count });
       })
       .catch(next);
   }
