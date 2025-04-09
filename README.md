@@ -6,7 +6,7 @@
 
 ## Link to the Hosted Version
 
-You can access the live version of the API [here](https://nc-newsapi.onrender.com/).
+You can access the live version of the API [here](https://nc-newsapi.onrender.com/api).
 
 In order to view the information in a nice format, you may want to install a JSON formatter extension to your browser such as this [JSON formatter](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en) extension for Google Chrome. I personally used this extension when viewing the data.
 
